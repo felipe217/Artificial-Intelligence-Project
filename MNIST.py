@@ -1,6 +1,8 @@
 import tensorflow as tf
 import cv2
 import numpy as np
+import os,sys
+import re
 
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
@@ -28,9 +30,24 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 print(sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels}))
 
 #Inicio fase de evaluacion
-imagen = cv2.imread('data/one.jpg', 0)
-temp = np.array(imagen)
-image_binary = np.reshape(temp, (1,784))
+
+pattern = r"\w+\.(BMP|bmp|JPG|jpg|BMP|bmp|PNG|png|JPEG|jpeg)"
+
+image_binary = []
+
+path ="data/"
+
+for filename in os.listdir(path):
+
+	result=re.match(pattern, filename)
+	
+	if result != None:
+		imagen = cv2.imread( path + result.group(), 0)
+
+		temp = np.array(imagen)
+		image_binary.append(np.reshape(temp, (10,784)))
+
+print image_binary
 
 result = y
 print(sess.run(result, feed_dict={x:image_binary}))
